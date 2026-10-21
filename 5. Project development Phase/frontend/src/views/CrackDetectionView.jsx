@@ -52,28 +52,33 @@ export default function CrackDetectionView() {
 
   const handleFileSelect = async (file) => {
     if (!file) return;
-    if (file.size > MAX_FILE_SIZE_BYTES) {
+
+    // FIXED: MAX_IMAGE_SIZE_BYTES (variable name fixed)
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
       handleSizeError(file, MAX_IMAGE_SIZE_MB);
       return;
     }
 
+    // Step 1: Set instant local preview URL immediately so user sees the image without delay
+    const initialUrl = URL.createObjectURL(file);
+    setPreviewUrl(initialUrl);
+    setCrackImage(file);
+
     try {
-      // Compress and resize on client-side using HTML5 Canvas (max 1600px, 0.8 JPEG quality)
+      // Step 2: Compress in background
       const compressed = await compressImage(file, 1600, 0.8);
       if (compressed && compressed.file) {
         setCrackImage(compressed.file);
-        setPreviewUrl(compressed.dataUrl || URL.createObjectURL(compressed.file));
+        if (compressed.dataUrl) {
+          setPreviewUrl(compressed.dataUrl);
+        }
         const originalMB = (file.size / (1024 * 1024)).toFixed(2);
         const optKB = Math.round(compressed.sizeBytes / 1024);
         addToast(`Crack photo attached (${originalMB} MB optimized to ${optKB} KB)`, 'success');
       } else {
-        setCrackImage(file);
-        setPreviewUrl(URL.createObjectURL(file));
         addToast('Crack photo attached', 'success');
       }
     } catch (_) {
-      setCrackImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
       addToast('Crack photo attached', 'success');
     }
   };
@@ -128,7 +133,7 @@ export default function CrackDetectionView() {
 
   const copySummary = () => {
     if (!result) return;
-    const text = `CONSTRUCTAI CRACK DIAGNOSIS REPORT\nType: ${result.crack_type} (${result.classification})\nSeverity: ${result.severity} (${result.severity_percentage}%)\nWidth: ${result.width_estimate_mm}\n\nProbable Causes:\n${(result.probable_causes || []).join('\n- ')}\n\nImpact:\n${result.structural_integrity_impact}`;
+    const text = `CONSTRUCTAI CRACK DIAGNOSIS REPORT\nType: ${result.crack_type} (${result.classification})\nSeverity: ${result.severity} (${result.severity_percentage}%)\nWidth: ${result.width_estimate_mm}\n\nProbable Causes:\n${(result.probable_causes || []).join('\n')}\n\nImpact:\n${result.structural_integrity_impact}`;
     navigator.clipboard.writeText(text);
     addToast('Diagnosis copied to clipboard', 'success');
   };
@@ -331,13 +336,12 @@ export default function CrackDetectionView() {
                     </p>
                     <div className="w-full bg-slate-200 rounded-full h-1.5 mt-2">
                       <div
-                        className={`h-1.5 rounded-full ${
-                          result.severity_percentage > 70
-                            ? 'bg-rose-500'
-                            : result.severity_percentage > 40
+                        className={`h-1.5 rounded-full ${result.severity_percentage > 70
+                          ? 'bg-rose-500'
+                          : result.severity_percentage > 40
                             ? 'bg-amber-500'
                             : 'bg-emerald-500'
-                        }`}
+                          }`}
                         style={{ width: `${result.severity_percentage}%` }}
                       />
                     </div>
@@ -424,11 +428,10 @@ export default function CrackDetectionView() {
                         </div>
 
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap ${
-                            step.urgency.includes('Immediate')
-                              ? 'bg-rose-50 text-rose-700 border-rose-200'
-                              : 'bg-amber-50 text-amber-700 border-amber-200'
-                          }`}
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap ${step.urgency.includes('Immediate')
+                            ? 'bg-rose-50 text-rose-700 border-rose-200'
+                            : 'bg-amber-50 text-amber-700 border-amber-200'
+                            }`}
                         >
                           {step.urgency}
                         </span>
