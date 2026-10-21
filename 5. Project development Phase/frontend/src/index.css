@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#f8fafc] text-slate-800 antialiased font-sans;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Custom Modern Scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+}
+
+@layer components {
+  /* Ultra-sleek enterprise card */
+  .cai-card {
+    @apply bg-white border border-slate-200/80 rounded-xl p-6 shadow-sm transition-all duration-200 hover:shadow-card-hover;
+  }
+
+  .cai-card-flat {
+    @apply bg-white border border-slate-200/80 rounded-xl p-6;
+  }
+
+  /* Electric brand button */
+  .cai-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-construction-500 hover:bg-construction-600 active:scale-[0.98] transition-all duration-200 shadow-sm hover:shadow-glow-orange disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:shadow-none;
+  }
+
+  .cai-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 hover:text-slate-900 active:scale-[0.98] transition-all duration-200 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+
+  /* Form inputs */
+  .cai-input {
+    @apply w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-construction-500/20 focus:border-construction-500 transition-all duration-200;
+  }
+
+  .cai-label {
+    @apply block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5;
+  }
+}
+
+/* Shimmer animation for loading skeleton */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
