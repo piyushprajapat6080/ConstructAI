@@ -1,7 +1,41 @@
 import { compressImage } from '../utils/imageCompressor';
 
-// ConstructAI API Client
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+// Production Render backend fallback URL
+const DEFAULT_RENDER_BACKEND = 'https://constructai-backend.onrender.com';
+
+/**
+ * Returns the dynamic Swagger Interactive Docs URL based on environment configuration.
+ * Priority:
+ * 1. import.meta.env.VITE_API_URL or VITE_RENDER_BACKEND_URL (e.g. https://<app>.onrender.com)
+ * 2. import.meta.env.VITE_API_BASE_URL (e.g. https://<app>.onrender.com/api)
+ * 3. Fallback to production Render backend docs URL (https://constructai-backend.onrender.com/docs)
+ */
+export const getSwaggerDocsUrl = () => {
+  const envApiUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_RENDER_BACKEND_URL;
+  if (envApiUrl && typeof envApiUrl === 'string') {
+    const trimmed = envApiUrl.trim();
+    if (trimmed.endsWith('/docs')) return trimmed;
+    const clean = trimmed.replace(/\/api\/?$/, '').replace(/\/+$/, '');
+    return `${clean}/docs`;
+  }
+
+  const envApiBase = import.meta.env.VITE_API_BASE_URL;
+  if (envApiBase && typeof envApiBase === 'string') {
+    const trimmed = envApiBase.trim();
+    if (trimmed.endsWith('/docs')) return trimmed;
+    const clean = trimmed.replace(/\/api\/?$/, '').replace(/\/+$/, '');
+    return `${clean}/docs`;
+  }
+
+  return `${DEFAULT_RENDER_BACKEND}/docs`;
+};
+
+export const SWAGGER_DOCS_URL = getSwaggerDocsUrl();
+
+// ConstructAI API Client Base Endpoint
+const API_BASE = 
+  import.meta.env.VITE_API_BASE_URL || 
+  (import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.trim().replace(/\/api\/?$/, '').replace(/\/+$/, '')}/api` : 'http://localhost:8000/api');
 
 async function handleResponse(res) {
   if (!res.ok) {

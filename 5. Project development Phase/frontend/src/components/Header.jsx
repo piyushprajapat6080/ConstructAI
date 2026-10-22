@@ -2,6 +2,7 @@ import React from 'react';
 import { HardHat, ShieldCheck, Cpu, ExternalLink, ChevronRight, LogOut, User, Sparkles } from 'lucide-react';
 import { NAVIGATION_ITEMS } from './Sidebar';
 import { getEnterpriseProfile } from '../utils/userProfile';
+import { SWAGGER_DOCS_URL } from '../api/client';
 
 export default function Header({ activeTab, onExportReport, canExport = false, user, onLogout }) {
   const currentItem = NAVIGATION_ITEMS.find((item) => item.id === activeTab) || NAVIGATION_ITEMS[0];
@@ -63,9 +64,9 @@ export default function Header({ activeTab, onExportReport, canExport = false, u
 
         {/* API Docs Link */}
         <a
-          href="http://localhost:8000/docs"
+          href={SWAGGER_DOCS_URL}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
           title="Open FastAPI Swagger Interactive Docs"
         >

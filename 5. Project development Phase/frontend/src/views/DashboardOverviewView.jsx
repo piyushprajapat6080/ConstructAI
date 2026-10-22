@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { getEnterpriseProfile } from '../utils/userProfile';
 import { NAVIGATION_ITEMS } from '../components/Sidebar';
+import { SWAGGER_DOCS_URL } from '../api/client';
 
 export default function DashboardOverviewView({
   user,
@@ -295,9 +296,9 @@ export default function DashboardOverviewView({
             )}
 
             <a
-              href="http://localhost:8000/docs"
+              href={SWAGGER_DOCS_URL}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 font-mono text-xs transition-colors"
             >
               <span>Swagger Interactive Docs</span>
