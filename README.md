@@ -1,5 +1,11 @@
 # 🏗️ CONSTRUCTAI — Ultra-Modern Multimodal Construction Intelligence Platform
 
+## 🚀 Live Demo & Project Links
+
+- **Hosted Web App:** [https://constructai-virid.vercel.app/](https://constructai-virid.vercel.app/)
+- **Walkthrough Video Demonstration:** [Google Drive Demo](https://drive.google.com/file/d/1eA7C_geC51IBzPd63hh8fu_gWicvW4cP/view?usp=sharing)
+- **Evaluation Credentials:** Refer to `7. Project documentation/Project Executable Files.pdf` (Page 3)
+
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Pydantic v2](https://img.shields.io/badge/Pydantic-v2.6+-e92063?style=flat&logo=pydantic&logoColor=white)](https://docs.pydantic.dev/)
 [![React 18](https://img.shields.io/badge/React-18-61dafb?style=flat&logo=react&logoColor=black)](https://react.dev)
