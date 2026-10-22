@@ -14,14 +14,11 @@ import {
   Download,
   Calendar,
   CheckCircle2,
-  Info,
-  UserPlus,
-  X
+  Info
 } from 'lucide-react';
 import { AnalysisShimmerOverlay } from '../components/LoadingSkeleton';
 import { useToast } from '../components/Toast';
 import { api } from '../api/client';
-import EnterpriseStaffProvisioning from '../components/EnterpriseStaffProvisioning';
 
 const SUGGESTIONS = [
   'Create full plan for 20x30 slab construction',
@@ -35,7 +32,6 @@ export default function ProjectPlannerView() {
   const [projectBrief, setProjectBrief] = useState('Create full plan for 20x30 slab construction');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
-  const [showProvisioningModal, setShowProvisioningModal] = useState(false);
 
   const handleGenerate = async (e) => {
     if (e) e.preventDefault();
@@ -90,20 +86,10 @@ export default function ProjectPlannerView() {
     <div className="space-y-6">
       {/* Lead Banner */}
       <div className="bg-gradient-to-r from-industrial-950 via-industrial-900 to-industrial-800 text-white rounded-2xl p-6 shadow-md border border-slate-800">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-construction-500/20 text-construction-400 border border-construction-500/40">
-              Bill of Quantities (BOQ) + Timeline Generator
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setShowProvisioningModal(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 border border-orange-500/40 text-xs font-bold transition-all cursor-pointer shadow-sm w-fit"
-          >
-            <UserPlus className="w-3.5 h-3.5 text-orange-400" />
-            <span>Staff Provisioning Modal</span>
-          </button>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-construction-500/20 text-construction-400 border border-construction-500/40">
+            Bill of Quantities (BOQ) + Timeline Generator
+          </span>
         </div>
         <h2 className="text-xl font-bold tracking-tight">
           Project Planner & Automated Cost Estimator
@@ -422,29 +408,6 @@ export default function ProjectPlannerView() {
           </div>
         </div>
       ) : null}
-
-      {/* Enterprise Credential & Staff Provisioning Card on Admin Dashboard */}
-      <div className="mt-8 pt-6 border-t border-slate-200">
-        <EnterpriseStaffProvisioning />
-      </div>
-
-      {/* Enterprise Staff Provisioning Modal Overlay */}
-      {showProvisioningModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#0B0F19] border border-slate-700/80 rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 shadow-2xl relative">
-            <div className="flex justify-end mb-2">
-              <button
-                onClick={() => setShowProvisioningModal(false)}
-                className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors cursor-pointer"
-                title="Close modal"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <EnterpriseStaffProvisioning isModal onClose={() => setShowProvisioningModal(false)} />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

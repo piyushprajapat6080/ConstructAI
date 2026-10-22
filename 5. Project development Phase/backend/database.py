@@ -64,13 +64,13 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def seed_default_admin():
     """
     Seed default enterprise credentials if not already present:
-    - Email: admin@constructai.internal
-    - Password: AdminAccessKey#2026
-    - Role: ADMIN
-    - Title: Project Director
+    - Admin: admin@constructai.internal / AdminAccessKey#2026 (DIR-EXEC-001)
+    - Safety Officer: safety@constructai.internal / SafetyLead@2026 (HSE-SITE-402)
+    - QC Engineer: qc@constructai.internal / QCStructural@2026 (QC-IS456-01)
     """
     db = SessionLocal()
     try:
+        # 1. Admin
         admin_email = "admin@constructai.internal"
         existing = db.query(UserModel).filter(UserModel.email.ilike(admin_email)).first()
         if not existing:
@@ -87,7 +87,6 @@ def seed_default_admin():
             db.commit()
             print(f"[ConstructAI DB] Successfully seeded default Admin credentials: {admin_email}")
 
-        # Also seed fallback demo compatibility admin if desired
         legacy_email = "admin@constructai.com"
         existing_legacy = db.query(UserModel).filter(UserModel.email.ilike(legacy_email)).first()
         if not existing_legacy:
@@ -103,6 +102,40 @@ def seed_default_admin():
             db.add(legacy_admin)
             db.commit()
 
+        # 2. Safety Officer
+        safety_email = "safety@constructai.internal"
+        existing_safety = db.query(UserModel).filter(UserModel.email.ilike(safety_email)).first()
+        if not existing_safety:
+            safety_user = UserModel(
+                email=safety_email,
+                password_hash=hash_password("SafetyLead@2026"),
+                role="SAFETY",
+                station_id="HSE-SITE-402",
+                title="Site Safety Lead",
+                is_active=True,
+                created_at=datetime.now(timezone.utc)
+            )
+            db.add(safety_user)
+            db.commit()
+            print(f"[ConstructAI DB] Successfully seeded default Safety credentials: {safety_email}")
+
+        # 3. QC Structural Engineer
+        qc_email = "qc@constructai.internal"
+        existing_qc = db.query(UserModel).filter(UserModel.email.ilike(qc_email)).first()
+        if not existing_qc:
+            qc_user = UserModel(
+                email=qc_email,
+                password_hash=hash_password("QCStructural@2026"),
+                role="QC",
+                station_id="QC-IS456-01",
+                title="Civil QC Specialist",
+                is_active=True,
+                created_at=datetime.now(timezone.utc)
+            )
+            db.add(qc_user)
+            db.commit()
+            print(f"[ConstructAI DB] Successfully seeded default QC credentials: {qc_email}")
+
     except Exception as e:
         db.rollback()
         print(f"[ConstructAI DB] Notice during seeding: {e}")
@@ -114,3 +147,4 @@ def init_db():
     """Create all tables and seed default users"""
     Base.metadata.create_all(bind=engine)
     seed_default_admin()
+

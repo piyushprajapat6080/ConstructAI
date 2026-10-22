@@ -30,7 +30,7 @@ export const INDUSTRIAL_ROLES = [
     activeBg: 'bg-emerald-950/40 border-emerald-500 text-emerald-300 shadow-[0_0_20px_rgba(34,197,94,0.2)]',
     tagColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
     desc: 'Station HSE-SITE-402 | Real-time CCTV PPE streams, sirens & BOCW 1996 compliance',
-    defaultView: 'safety'
+    defaultView: 'overview'
   },
   {
     id: 'QC Structural Engineer',
@@ -45,7 +45,7 @@ export const INDUSTRIAL_ROLES = [
     activeBg: 'bg-sky-950/40 border-sky-400 text-sky-200 shadow-[0_0_20px_rgba(56,189,248,0.2)]',
     tagColor: 'bg-sky-500/20 text-sky-300 border-sky-500/30',
     desc: 'Station QC-IS456-01 | IS 456 Crack Diagnostics & epoxy remediation blueprints',
-    defaultView: 'crack'
+    defaultView: 'overview'
   },
   {
     id: 'Project Admin / Director',
@@ -60,14 +60,14 @@ export const INDUSTRIAL_ROLES = [
     activeBg: 'bg-orange-950/40 border-orange-500 text-orange-200 shadow-[0_0_20px_rgba(249,115,22,0.2)]',
     tagColor: 'bg-orange-500/20 text-orange-300 border-orange-500/30',
     desc: 'Station DIR-EXEC-001 | Full access: BOQ Takeoffs, Telemetry & Staff Provisioning',
-    defaultView: 'planner'
+    defaultView: 'overview'
   }
 ];
 
 export default function Login({ onLoginSuccess }) {
+  const [selectedRole, setSelectedRole] = useState('Project Admin / Director');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [selectedRole, setSelectedRole] = useState('Project Admin / Director');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -101,6 +101,9 @@ export default function Login({ onLoginSuccess }) {
 
       // Persist auth tokens in localStorage for persistent session
       if (response && response.access_token) {
+        if (response.user) {
+          response.user.default_view = 'overview';
+        }
         localStorage.setItem('constructai_token', response.access_token);
         localStorage.setItem('constructai_user', JSON.stringify(response.user));
         localStorage.setItem('constructai_role', response.user.role);
@@ -262,9 +265,11 @@ export default function Login({ onLoginSuccess }) {
 
             {/* Step 2: Operational Station ID / Email Input */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-                Enterprise Email or Operational Station ID
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                  Enterprise Email or Operational Station ID
+                </label>
+              </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                   <User className="w-4 h-4" />
@@ -273,7 +278,7 @@ export default function Login({ onLoginSuccess }) {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="e.g. admin@constructai.internal or staff@constructai.com"
+                  placeholder="Enter Enterprise Email or Station ID"
                   className="w-full pl-10 pr-4 py-2.5 bg-[#0F172A] border border-slate-700 rounded-xl text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-400 transition-all font-mono"
                   required
                 />
@@ -298,7 +303,7 @@ export default function Login({ onLoginSuccess }) {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter enterprise access key"
+                  placeholder="Enter Access Key"
                   className="w-full pl-10 pr-11 py-2.5 bg-[#0F172A] border border-slate-700 rounded-xl text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40 focus:border-sky-400 transition-all font-mono"
                   required
                 />
@@ -318,9 +323,9 @@ export default function Login({ onLoginSuccess }) {
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                 <span>
-                  Authorized View:{' '}
+                  Post-Login View:{' '}
                   <span className="font-semibold text-slate-200">
-                    {activeRoleData.label} ({activeRoleData.defaultView.toUpperCase()})
+                    Overview Hub ({activeRoleData.label})
                   </span>
                 </span>
               </div>

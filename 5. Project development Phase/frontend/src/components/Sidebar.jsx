@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  LayoutDashboard,
   ShieldAlert,
   Zap,
   Building2,
@@ -20,6 +21,14 @@ import {
 import { getEnterpriseProfile } from '../utils/userProfile';
 
 export const NAVIGATION_ITEMS = [
+  { 
+    id: 'overview', 
+    label: 'Overview Hub', 
+    icon: LayoutDashboard, 
+    badge: 'Live',
+    requiredRole: 'All Clearances',
+    rolesAllowed: ['Site Safety Officer', 'QC Structural Engineer', 'Project Admin / Director']
+  },
   { 
     id: 'provisioning', 
     label: 'Staff Provisioning', 

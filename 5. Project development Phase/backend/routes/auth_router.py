@@ -21,8 +21,8 @@ ROLE_PERMISSIONS: Dict[str, Dict[str, Any]] = {
         "role_title": "Site Safety Lead",
         "avatar_initials": "SO",
         "department": "HSE & Site Safety Directorate",
-        "default_view": "safety",
-        "allowed_views": ["safety", "weather", "daily", "knowledge", "chatbot"],
+        "default_view": "overview",
+        "allowed_views": ["overview", "safety", "weather", "daily", "knowledge", "chatbot"],
         "permissions": [
             "safety:read",
             "safety:analyze",
@@ -41,8 +41,8 @@ ROLE_PERMISSIONS: Dict[str, Dict[str, Any]] = {
         "role_title": "Civil QC Specialist",
         "avatar_initials": "QC",
         "department": "Structural QA & IS 456 Forensics",
-        "default_view": "crack",
-        "allowed_views": ["crack", "knowledge", "planner", "chatbot", "weather"],
+        "default_view": "overview",
+        "allowed_views": ["overview", "crack", "knowledge", "planner", "chatbot", "weather"],
         "permissions": [
             "crack:read",
             "crack:analyze",
@@ -61,8 +61,8 @@ ROLE_PERMISSIONS: Dict[str, Dict[str, Any]] = {
         "role_title": "Executive Root Admin",
         "avatar_initials": "PD",
         "department": "Executive Directorate & Operations",
-        "default_view": "planner",
-        "allowed_views": ["safety", "crack", "valuation", "planner", "knowledge", "chatbot", "daily", "weather"],
+        "default_view": "overview",
+        "allowed_views": ["overview", "provisioning", "safety", "crack", "valuation", "planner", "knowledge", "chatbot", "daily", "weather"],
         "permissions": [
             "admin:all",
             "safety:all",
@@ -82,6 +82,14 @@ ROLE_PERMISSIONS: Dict[str, Dict[str, Any]] = {
 
 # Seeded Demo Users (Operational Station IDs & Enterprise Designations)
 DEMO_USERS: Dict[str, Dict[str, Any]] = {
+    "safety@constructai.internal": {
+        "id": "USR-HSE-402",
+        "employee_id": "HSE-SITE-402",
+        "name": "HSE Safety Officer",
+        "role_title": "Site Safety Lead",
+        "password": "SafetyLead@2026",
+        "role": "Site Safety Officer"
+    },
     "safety@constructai.com": {
         "id": "USR-HSE-402",
         "employee_id": "HSE-SITE-402",
@@ -105,6 +113,14 @@ DEMO_USERS: Dict[str, Dict[str, Any]] = {
         "role_title": "Site Safety Lead",
         "password": "SafetyLead@2026",
         "role": "Site Safety Officer"
+    },
+    "qc@constructai.internal": {
+        "id": "USR-QC-01",
+        "employee_id": "QC-IS456-01",
+        "name": "Lead QC Structural Engineer",
+        "role_title": "Civil QC Specialist",
+        "password": "QCStructural@2026",
+        "role": "QC Structural Engineer"
     },
     "qc@constructai.com": {
         "id": "USR-QC-01",
@@ -130,12 +146,20 @@ DEMO_USERS: Dict[str, Dict[str, Any]] = {
         "password": "QCStructural@2026",
         "role": "QC Structural Engineer"
     },
+    "admin@constructai.internal": {
+        "id": "USR-DIR-001",
+        "employee_id": "DIR-EXEC-001",
+        "name": "Project Director",
+        "role_title": "Executive Root Admin",
+        "password": "AdminAccessKey#2026",
+        "role": "Project Admin / Director"
+    },
     "admin@constructai.com": {
         "id": "USR-DIR-001",
         "employee_id": "DIR-EXEC-001",
         "name": "Project Director",
         "role_title": "Executive Root Admin",
-        "password": "AdminDirector@2026",
+        "password": "AdminAccessKey#2026",
         "role": "Project Admin / Director"
     },
     "dir-exec-001": {
@@ -143,7 +167,7 @@ DEMO_USERS: Dict[str, Dict[str, Any]] = {
         "employee_id": "DIR-EXEC-001",
         "name": "Project Director",
         "role_title": "Executive Root Admin",
-        "password": "AdminDirector@2026",
+        "password": "AdminAccessKey#2026",
         "role": "Project Admin / Director"
     },
     "emp-dir-001": {
@@ -151,7 +175,7 @@ DEMO_USERS: Dict[str, Dict[str, Any]] = {
         "employee_id": "DIR-EXEC-001",
         "name": "Project Director",
         "role_title": "Executive Root Admin",
-        "password": "AdminDirector@2026",
+        "password": "AdminAccessKey#2026",
         "role": "Project Admin / Director"
     }
 }
@@ -214,12 +238,12 @@ async def login(credentials: LoginRequest, db: Session = Depends(get_db)):
         title = db_user.title or role_meta.get("role_title", mapped_role)
         department = role_meta.get("department", "Site Operations")
         permissions = role_meta.get("permissions", [])
-        default_view = role_meta.get("default_view", "safety")
+        default_view = role_meta.get("default_view", "overview")
 
     elif clean_user in DEMO_USERS:
         # Fallback to seeded demo accounts if not yet in SQLite
         matched = DEMO_USERS[clean_user]
-        if plain_password != matched["password"] and plain_password != "AdminAccessKey#2026":
+        if plain_password != matched["password"] and plain_password not in ["AdminAccessKey#2026", "AdminDirector@2026"]:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid enterprise credentials or access key."
@@ -240,7 +264,7 @@ async def login(credentials: LoginRequest, db: Session = Depends(get_db)):
         title = matched.get("role_title", role_meta.get("role_title", mapped_role))
         department = role_meta.get("department", "Site Operations")
         permissions = role_meta.get("permissions", [])
-        default_view = role_meta.get("default_view", "safety")
+        default_view = role_meta.get("default_view", "overview")
 
     else:
         raise HTTPException(

@@ -13,6 +13,7 @@ import ChatbotView from './views/ChatbotView';
 import DailySiteAssistantView from './views/DailySiteAssistantView';
 import WeatherAdvisorView from './views/WeatherAdvisorView';
 import EnterpriseStaffProvisioning from './components/EnterpriseStaffProvisioning';
+import DashboardOverviewView from './views/DashboardOverviewView';
 import { Menu, X, ShieldCheck } from 'lucide-react';
 import { api } from './api/client';
 
@@ -28,8 +29,10 @@ function MainApp() {
   });
 
   const [activeTab, setActiveTab] = useState(() => {
-    if (user && user.default_view) return user.default_view;
-    return 'safety';
+    if (user && user.default_view && user.default_view !== 'planner' && user.default_view !== 'safety') {
+      return user.default_view;
+    }
+    return 'overview';
   });
   
   const [isOnline, setIsOnline] = useState(true);
@@ -50,9 +53,7 @@ function MainApp() {
   const handleLoginSuccess = (authData) => {
     setToken(authData.access_token);
     setUser(authData.user);
-    if (authData.user && authData.user.default_view) {
-      setActiveTab(authData.user.default_view);
-    }
+    setActiveTab('overview');
     addToast({
       type: 'success',
       title: `Access Granted: ${authData.user.role}`,
@@ -92,7 +93,7 @@ function MainApp() {
         employee_id: 'DIR-EXEC-001',
         department: 'Executive Directorate & Operations',
         permissions: ['admin:all'],
-        default_view: 'planner'
+        default_view: 'overview'
       };
       setUser(adminUser);
       localStorage.setItem('constructai_user', JSON.stringify(adminUser));
@@ -127,6 +128,16 @@ function MainApp() {
     }
 
     switch (activeTab) {
+      case 'overview':
+      case 'dashboard':
+        return (
+          <DashboardOverviewView
+            user={user}
+            setActiveTab={setActiveTab}
+            isOnline={isOnline}
+            onElevateToAdmin={handleElevateToAdmin}
+          />
+        );
       case 'provisioning':
         return <EnterpriseStaffProvisioning />;
       case 'safety':
@@ -146,7 +157,14 @@ function MainApp() {
       case 'weather':
         return <WeatherAdvisorView />;
       default:
-        return <SafetyMonitorView />;
+        return (
+          <DashboardOverviewView
+            user={user}
+            setActiveTab={setActiveTab}
+            isOnline={isOnline}
+            onElevateToAdmin={handleElevateToAdmin}
+          />
+        );
     }
   };
 
