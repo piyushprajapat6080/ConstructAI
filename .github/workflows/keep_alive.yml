@@ -1,0 +1,16 @@
+name: Backend Keep Alive
+
+on:
+  schedule:
+    # Har 14 minute me automatic run hoga (15 min sleep timeout se pehle)
+    - cron: '*/14 * * * *'
+  workflow_dispatch: # GitHub Actions page se manually test karne ke liye
+
+jobs:
+  keep-backend-awake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Ping to Backend Gateway
+        run: |
+          # Render container ping taaki hibernation sleep mode na ho
+          curl -I -s --max-time 30 "https://constructai-virid.vercel.app/api/v1/auth/roles" || true
